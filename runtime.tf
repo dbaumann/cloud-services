@@ -9,7 +9,7 @@ resource "aws_iam_role" "iam_for_lambda" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "",
+      "Sid": "AssumeRole",
       "Effect": "Allow",
       "Action": "sts:AssumeRole",
       "Principal": {
@@ -31,14 +31,26 @@ resource "aws_iam_role_policy" "lambda_role_policy" {
   "Version": "2012-10-17",
   "Statement": [
     {
-      "Sid": "",
+      "Sid": "Logs",
       "Effect": "Allow",
       "Action": [
-          "logs:CreateLogGroup",
-          "logs:CreateLogStream",
-          "logs:PutLogEvents"
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
       ],
       "Resource": "arn:aws:logs:*:*:*"
+    },
+    {
+      "Sid": "VPCAccess",
+      "Effect": "Allow",
+      "Action": [
+        "ec2:CreateNetworkInterface",
+        "ec2:DescribeNetworkInterfaces",
+        "ec2:DetachNetworkInterface",
+        "ec2:ModifyNetworkInterfaceAttribute",
+        "ec2:DeleteNetworkInterface"
+      ],
+      "Resource": "*"
     }
   ]
 }
@@ -49,7 +61,7 @@ resource "aws_lambda_function" "runtime_the-proxy" {
   filename            = "scala/the-proxy/target/scala-2.12/the-proxy.jar"
   function_name       = "the-proxy"
   role                = "${aws_iam_role.iam_for_lambda.arn}"
-  handler             = "com.summitcove.theproxy.MyHandler"
+  handler             = "com.summitcove.theproxy.ProxyHandler"
   source_code_hash    = "${base64sha256(file("scala/the-proxy/target/scala-2.12/the-proxy.jar"))}"
   runtime             = "java8"
   timeout             = "15"
@@ -61,8 +73,8 @@ resource "aws_lambda_function" "runtime_the-proxy" {
     }
   }
 
-  # vpc_config {
-  #   subnet_ids            = [ "${aws_subnet.proxy_subnet_private.id}" ]
-  #   security_group_ids    = [ "${aws_default_security_group.default.id}" ]
-  # }
+  vpc_config {
+    subnet_ids            = [ "${aws_subnet.proxy_subnet_private.id}" ]
+    security_group_ids    = [ "${aws_default_security_group.default.id}" ]
+  }
 }

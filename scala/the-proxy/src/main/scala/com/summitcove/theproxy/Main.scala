@@ -6,11 +6,22 @@ import scala.concurrent.Future
 import io.circe.generic.auto._
 import io.github.yeghishe.lambda._
 import com.softwaremill.sttp._
+import org.apache.log4j.Logger
+import io.circe._, io.circe.parser._
 
 // handler io.github.yeghishe.MySimpleHander::handler
 // input "foo"
 object MySimpleHander extends App {
-  def handler(name: String, context: Context): String = s"Hello $name"
+  def handler(rawJson: String, context: Context): Unit = {
+    val logger = Logger.getLogger(MySimpleHander.getClass)
+
+    parse(rawJson) match {
+      case Left(failure) =>
+        logger.info("Invalid JSON :(")
+      case Right(json) =>
+        logger.info(json.as[Map[String, String]])
+    }
+  }
 }
 
 case class Name(name: String)
@@ -25,5 +36,12 @@ class MyHandler extends Handler[Name, Greeting] {
 
     logger.info(s"Name is $name")
     Greeting(s"Hello ${name.name}")
+  }
+}
+
+class ProxyHandler extends JsonHandler {
+  def handler(json: Json, context: Context): Json = {
+    logger.info(json)
+    json
   }
 }

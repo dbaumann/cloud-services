@@ -14,11 +14,11 @@ libraryDependencies ++= {
   val sttpV         = "1.1.13"
 
   Seq(
-    "io.github.yeghishe"    %% "scala-aws-lambda-utils"      % lambdaUtilsV,
-    "com.iheart"            %% "ficus"                       % ficusV,
-    "com.amazonaws"         %  "aws-lambda-java-events"      % lambdaEventsV,
-    "org.scalamock"         %% "scalamock-scalatest-support" % scalaMockV % "it,test",
-    "com.softwaremill.sttp" %% "core"                        % sttpV
+    "io.github.yeghishe"      %% "scala-aws-lambda-utils"      % lambdaUtilsV,
+    "com.iheart"              %% "ficus"                       % ficusV,
+    "com.amazonaws"           %  "aws-lambda-java-events"      % lambdaEventsV,
+    "org.scalamock"           %% "scalamock-scalatest-support" % scalaMockV % "it,test",
+    "com.softwaremill.sttp"   %% "core"                        % sttpV,
   )
 }
 
