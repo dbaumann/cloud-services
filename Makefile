@@ -3,7 +3,11 @@ ifeq ($(NAME),)
 	exit 1
 endif
 ifeq ($(ORG),)
-	exit 1
+	exit 2
+endif
+ifneq (,$(wildcard scala/$(NAME)))
+	@echo project already exists
+	exit 3
 endif
 	cd scala;\
 	sbt new yeghishe/scala-aws-lambda-seed.g8 --name=${NAME} --organization=${ORG}

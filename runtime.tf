@@ -4,18 +4,41 @@ provider "aws" {
 
 resource "aws_iam_role" "iam_for_lambda" {
   name = "iam_for_lambda"
-
   assume_role_policy = <<EOF
 {
   "Version": "2012-10-17",
   "Statement": [
     {
+      "Sid": "",
+      "Effect": "Allow",
       "Action": "sts:AssumeRole",
       "Principal": {
-        "Service": "lambda.amazonaws.com"
-      },
+        "Service": [
+          "lambda.amazonaws.com"
+        ]
+      }
+    }
+  ]
+}
+EOF
+}
+
+resource "aws_iam_role_policy" "lambda_role_policy" {
+  name   = "lambda_role_policy"
+  role   = "${aws_iam_role.iam_for_lambda.id}"
+  policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Sid": "",
       "Effect": "Allow",
-      "Sid": ""
+      "Action": [
+          "logs:CreateLogGroup",
+          "logs:CreateLogStream",
+          "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
     }
   ]
 }
