@@ -25,30 +25,20 @@ resource "aws_subnet" "proxy_subnet_public" {
 }
 
 
-# -- route all traffic from private subnet to public subnet
+# -- route all traffic from private subnet through NAT in public subnet
 
 resource "aws_route_table" "proxy_routes_private" {
     vpc_id = "${aws_vpc.proxy_vpc.id}"
 
     route {
         cidr_block = "0.0.0.0/0"
-        nat_gateway_id = "${aws_nat_gateway.proxy_nat_gw.id}"
+        instance_id = "${aws_instance.nat.id}"
     }
 }
 
 resource "aws_route_table_association" "proxy_routes_private" {
     route_table_id = "${aws_route_table.proxy_routes_private.id}"
     subnet_id = "${aws_subnet.proxy_subnet_private.id}"
-}
-
-resource "aws_eip" "proxy_eip" {
-    # allocate a static ip
-    vpc = true
-}
-
-resource "aws_nat_gateway" "proxy_nat_gw" {
-    allocation_id     = "${aws_eip.proxy_eip.id}"
-    subnet_id         = "${aws_subnet.proxy_subnet_public.id}"
 }
 
 

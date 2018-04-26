@@ -1,8 +1,1 @@
-# terraform
-**/.terraform/*
-*.tfstate
-*.tfstate.*
-*.tfvars
-
-# developers
 .idea/

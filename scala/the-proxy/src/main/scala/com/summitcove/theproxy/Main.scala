@@ -41,7 +41,10 @@ class MyHandler extends Handler[Name, Greeting] {
 
 class ProxyHandler extends JsonHandler {
   def handler(json: Json, context: Context): Json = {
+    implicit val backend = HttpURLConnectionBackend()
+    
     logger.info(json)
+    sttp.get(uri"https://webhook.site/34cc6d7f-5212-4d9f-92a0-5f6365322071").send()
     json
   }
 }

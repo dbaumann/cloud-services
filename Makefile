@@ -12,7 +12,7 @@ endif
 	cd scala;\
 	sbt new yeghishe/scala-aws-lambda-seed.g8 --name=${NAME} --organization=${ORG}
 	sed 's/coverageEnabled := true/coverageEnabled := false/' scala/${NAME}/build.sbt
-	source scaffold.sh;\
+	source terraform/scaffold.sh;\
 	scaffold_lambda_resources ${NAME} ${ORG}
 
 deploy:
@@ -23,4 +23,5 @@ endif
 	sbt clean assembly
 	# todo coverage check
 	# todo style warning
+	cd terraform;\
 	terraform apply

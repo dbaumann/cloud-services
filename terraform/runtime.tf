@@ -58,11 +58,11 @@ EOF
 }
 
 resource "aws_lambda_function" "runtime_the-proxy" {
-  filename            = "scala/the-proxy/target/scala-2.12/the-proxy.jar"
+  filename            = "../scala/the-proxy/target/scala-2.12/the-proxy.jar"
   function_name       = "the-proxy"
   role                = "${aws_iam_role.iam_for_lambda.arn}"
   handler             = "com.summitcove.theproxy.ProxyHandler"
-  source_code_hash    = "${base64sha256(file("scala/the-proxy/target/scala-2.12/the-proxy.jar"))}"
+  source_code_hash    = "${base64sha256(file("../scala/the-proxy/target/scala-2.12/the-proxy.jar"))}"
   runtime             = "java8"
   timeout             = "15"
   memory_size         = "512"
