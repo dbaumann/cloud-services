@@ -65,12 +65,10 @@ resource "aws_lambda_function" "runtime_the-proxy" {
   source_code_hash    = "${base64sha256(file("../scala/the-proxy/target/scala-2.12/the-proxy.jar"))}"
   runtime             = "java8"
   timeout             = "15"
-  memory_size         = "512"
+  memory_size         = "256"
 
-  environment {
-    variables = {
-      foo = "bar"
-    }
+  lifecycle {
+    ignore_changes = ["environment"]
   }
 
   vpc_config {

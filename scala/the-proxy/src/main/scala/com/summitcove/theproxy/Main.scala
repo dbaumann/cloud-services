@@ -7,44 +7,34 @@ import io.circe.generic.auto._
 import io.github.yeghishe.lambda._
 import com.softwaremill.sttp._
 import org.apache.log4j.Logger
-import io.circe._, io.circe.parser._
 
-// handler io.github.yeghishe.MySimpleHander::handler
-// input "foo"
-object MySimpleHander extends App {
-  def handler(rawJson: String, context: Context): Unit = {
-    val logger = Logger.getLogger(MySimpleHander.getClass)
-
-    parse(rawJson) match {
-      case Left(failure) =>
-        logger.info("Invalid JSON :(")
-      case Right(json) =>
-        logger.info(json.as[Map[String, String]])
-    }
-  }
-}
-
-case class Name(name: String)
-case class Greeting(message: String)
-
-// handler io.github.yeghishe.MyHandler
-// input {"name": "Yeghishe"}
-class MyHandler extends Handler[Name, Greeting] {
-  def handler(name: Name, context: Context): Greeting = {
-    implicit val backend = HttpURLConnectionBackend()
-    sttp.get(uri"https://webhook.site/34cc6d7f-5212-4d9f-92a0-5f6365322071").send()
-
-    logger.info(s"Name is $name")
-    Greeting(s"Hello ${name.name}")
-  }
-}
+import io.circe._, io.circe.generic.auto._, io.circe.parser._, io.circe.syntax._, io.circe.optics.JsonPath._
 
 class ProxyHandler extends JsonHandler {
   def handler(json: Json, context: Context): Json = {
+    val target = sys.env("TARGET_URI")
+
     implicit val backend = HttpURLConnectionBackend()
-    
-    logger.info(json)
-    sttp.get(uri"https://webhook.site/34cc6d7f-5212-4d9f-92a0-5f6365322071").send()
-    json
+
+    logger.info(s"sending event to $target")
+
+    sttp.post(uri"$target").body(expandDotted(json)).send()
+
+    Json.Null
+  }
+
+  // https://stackoverflow.com/a/44059753
+  val Dotted = "([^\\.]*)\\.(.*)".r
+  protected[theproxy] def expandDotted(j: Json): Json = j.arrayOrObject(
+    j,
+    js => Json.fromValues(js.map(expandDotted)),
+    _.toList.map {
+      case (Dotted(k, rest), v) => Json.obj(k -> expandDotted(Json.obj(rest -> v)))
+      case (k, v) => Json.obj(k -> expandDotted(v))
+    }.reduceOption(_.deepMerge(_)).getOrElse(Json.obj())
+  )
+
+  implicit val jsonSerializer: BodySerializer[Json] = { json: Json =>
+    StringBody(json.toString, "UTF-8", Some("application/json"))
   }
 }

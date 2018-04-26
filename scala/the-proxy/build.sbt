@@ -12,6 +12,7 @@ libraryDependencies ++= {
   val lambdaUtilsV  = "0.0.3"
   val lambdaEventsV = "2.0.1"
   val sttpV         = "1.1.13"
+  val circeV        = "0.7.0"
 
   Seq(
     "io.github.yeghishe"      %% "scala-aws-lambda-utils"      % lambdaUtilsV,
@@ -19,6 +20,8 @@ libraryDependencies ++= {
     "com.amazonaws"           %  "aws-lambda-java-events"      % lambdaEventsV,
     "org.scalamock"           %% "scalamock-scalatest-support" % scalaMockV % "it,test",
     "com.softwaremill.sttp"   %% "core"                        % sttpV,
+    "io.circe"                %% "circe-optics"                % circeV,
+    "com.softwaremill.sttp"   %% "circe"                       % sttpV
   )
 }
 
