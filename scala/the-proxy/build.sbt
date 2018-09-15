@@ -1,5 +1,5 @@
 name := "the-proxy"
-organization := "com.summitcove"
+organization := "org.dbaumann"
 version := "0.0.1"
 scalaVersion := "2.12.3"
 scalacOptions := Seq("-unchecked", "-feature", "-deprecation", "-encoding", "utf8")

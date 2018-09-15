@@ -1,4 +1,4 @@
-package com.summitcove.theproxy
+package org.dbaumann.theproxy
 
 import com.typesafe.config.ConfigFactory
 import net.ceedubs.ficus.Ficus

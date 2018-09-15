@@ -1,4 +1,4 @@
-package com.summitcove.theproxy
+package org.dbaumann.theproxy
 
 import java.io.{InputStream, OutputStream}
 
